@@ -1,0 +1,521 @@
+{
+	"info": {
+		"_postman_id": "7f53011d-9dbb-4fa1-88e8-88c686e13309",
+		"name": "testeAlunos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38465899"
+	},
+	"item": [
+		{
+			"name": "get token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"pm.environment.set('Cookie', response.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}get-csrf-token",
+					"host": [
+						"{{BaseURL}}get-csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"gustavos@\",\r\n    \"password\": \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}login",
+					"host": [
+						"{{BaseURL}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1 - tenta cadastrar um novo aluno com campos completos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name}}\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 2 - tenta cadastrar um novo aluno com o campo de senha vazio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"{{random_name}}\",\r\n    \"email\": \"{{random_email}}\",\r\n    \"acesso\": \"ALUNO\",\r\n    \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 3 - tenta cadastrar um novo aluno com um email já cadastrado",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name}}\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 4 - tenta cadastrar um novo aluno utilizando uma senha fraca",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name}}\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"123\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 5 - tenta cadastrar um novo aluno com um email inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const invalidRandomEmail = `user${timestamp}gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"invalid_random_email\", invalidRandomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name}}\",\r\n  \"email\": \"{{invalid_random_email}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 6 - tenta cadastrar um novo aluno com nome junto de caracteres especiais e números",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const specialChars = [\"!\", \"@\", \"#\", \"123\", \"456\", \"&\", \"*\", \"?\", \"✓\", \"☆\"];\r",
+							"    \r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    const randomChar = specialChars[Math.floor(Math.random() * specialChars.length)];\r",
+							"    \r",
+							"    // Combinações aleatórias:\r",
+							"    const formats = [\r",
+							"        `${randomFirstName}${randomChar} ${randomLastName}`,  // Ex: \"João! Silva\"\r",
+							"        `${randomFirstName} ${randomLastName}${randomChar}`,  // Ex: \"João Silva123\"\r",
+							"        `${randomChar}${randomFirstName} ${randomLastName}`   // Ex: \"#João Silva\"\r",
+							"    ];\r",
+							"    \r",
+							"    return formats[Math.floor(Math.random() * formats.length)];\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@test.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name}}\",\r\n  \"email\": \"{{random_email}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
