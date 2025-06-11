@@ -1,0 +1,814 @@
+{
+	"info": {
+		"_postman_id": "a25e0f69-39de-45f7-b349-a68f223d0ad6",
+		"name": "testeProjetos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45750347",
+		"_collection_link": "https://guilherme-830994.postman.co/workspace/Guilherme's-Workspace~3860a203-ea80-41c1-8386-a493f6bf2284/collection/45750347-a25e0f69-39de-45f7-b349-a68f223d0ad6?action=share&source=collection_link&creator=45750347"
+	},
+	"item": [
+		{
+			"name": "token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"pm.environment.set('Cookie', response.token);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const timestamp = Date.now();\r",
+							"\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)]+ timestamp;\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"function randomEmail(index) {\r",
+							"    return `user${timestamp}` + index + `@gmail.com`;\r",
+							"}\r",
+							"function getRandomProjeto() {\r",
+							"    let hora = new Date().getHours().toString()\r",
+							"    let min = new Date().getMinutes().toString()\r",
+							"    let mil = new Date().getMilliseconds().toString()\r",
+							"\r",
+							"    return 'projeto_' + hora + min + mil\r",
+							"}\r",
+							"\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"for (let i = 1; i <= 4; i++) {\r",
+							"        pm.environment.set(\"random_name\" + i, getRandomName());\r",
+							"        pm.environment.set(\"random_email\" + i, randomEmail(i)); \r",
+							"    }\r",
+							"\r",
+							"pm.environment.set(\"random_project_name\", getRandomProjeto());\r",
+							"pm.environment.set(\"random_orientador\", getRandomName());\r",
+							"pm.environment.set(\"random_email_orientador\", randomEmail(1337));\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}get-csrf-token",
+					"host": [
+						"{{BaseURL}}get-csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"gustavos@\",\r\n    \"password\": \"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}login",
+					"host": [
+						"{{BaseURL}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.1 - cadastra aluno 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name1}}\",\r\n  \"email\": \"{{random_email1}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.2- cadastra aluno 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"for (let i = 0; i < 4; i++) {\r",
+							"        pm.environment.set(\"random_name\" + i, getRandomName());\r",
+							"        pm.environment.set(\"random_email\" + i, randomEmail); \r",
+							"    }\r",
+							"\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name2}}\",\r\n  \"email\": \"{{random_email2}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.3- cadastra aluno 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"{{random_email3}}\",\r\n  \"nome\": \"{{random_name3}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.4- cadastra aluno 4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_name4}}\",\r\n  \"email\": \"{{random_email4}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ALUNO\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Aluno/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Aluno",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.5 - cadastra orientador",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nome\": \"{{random_orientador}}\",\r\n  \"email\": \"{{random_email_orientador}}\",\r\n  \"password\": \"{{random_password}}\",\r\n  \"acesso\": \"ORIENTADOR\",\r\n  \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Orientador/add",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Orientador",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 1.6 - criar um grupo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "titulo",
+							"value": "{{random_project_name}}",
+							"type": "text"
+						},
+						{
+							"key": "orientador_email",
+							"value": "{{random_email_orientador}}",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "Com pendência",
+							"type": "text"
+						},
+						{
+							"key": "paralela",
+							"value": "Outro",
+							"type": "text"
+						},
+						{
+							"key": "email_aluno1",
+							"value": "{{random_email1}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/create",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 2 - criar um grupo sem nenhum aluno",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "titulo",
+							"value": "{{random_project_name}}",
+							"type": "text"
+						},
+						{
+							"key": "orientador_email",
+							"value": "{{random_email_orientador}}",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "Com pendência",
+							"type": "text"
+						},
+						{
+							"key": "paralela",
+							"value": "Outro",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/create",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 3 - fetch todos os grupos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/all",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 4 - fetch numero grupo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "numerogrupo ",
+							"value": "12",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/{{numero_grupo}}",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"{{numero_grupo}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 5 - fetch numero grupo inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/AAAAAAA",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"AAAAAAA"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "caso 6 - deletar time index inválido",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{Cookie}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "numgrupo",
+							"value": "asd",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{BaseURL}}api/v1/Time/delete",
+					"host": [
+						"{{BaseURL}}api"
+					],
+					"path": [
+						"v1",
+						"Time",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
