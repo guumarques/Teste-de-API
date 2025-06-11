@@ -1,0 +1,457 @@
+{
+	"info": {
+		"_postman_id": "1cab0fbd-d6cd-43f4-82dc-5adf64d4cb2f",
+		"name": "TesteAPIPostman",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25629364"
+	},
+	"item": [
+		{
+			"name": "getToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let response = pm.response.json();\r",
+							"pm.environment.set('Cookie', response.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BaseURL}}/get-csrf-token",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"get-csrf-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"gustavos@\",\r\n    \"password\":\"123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/login",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 1 -addOrientadorCompleto",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{random_email}}\",\r\n    \"nome\": \"{{random_name}}\",\r\n    \"password\": \"{{random_password}}\",\r\n    \"acesso\": \"PROFESSOR\",\r\n    \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/add",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 2 -addOrientadorCadastrado",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{random_email}}\",\r\n    \"nome\": \"{{random_name}}\",\r\n    \"password\": \"{{random_password}}\",\r\n    \"acesso\": \"PROFESSOR\",\r\n    \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/add",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 3 - addOrientadorFaltandoEmail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Gerar um nome aleatório (opcional)\r",
+							"function getRandomName() {\r",
+							"    const firstNames = [\"João\", \"Maria\", \"Pedro\", \"Ana\", \"Carlos\", \"Laura\", \"Lucas\", \"Mariana\", \"Gabriel\", \"Juliana\"];\r",
+							"    const lastNames = [\"Silva\", \"Santos\", \"Oliveira\", \"Souza\", \"Pereira\", \"Costa\", \"Ferreira\", \"Rodrigues\", \"Almeida\", \"Lima\"];\r",
+							"    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];\r",
+							"    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];\r",
+							"    return `${randomFirstName} ${randomLastName}`;\r",
+							"}\r",
+							"\r",
+							"// Obter o timestamp atual em milissegundos\r",
+							"const timestamp = Date.now();\r",
+							"\r",
+							"// Gerar um email único com timestamp\r",
+							"const randomEmail = `user${timestamp}@gmail.com`;\r",
+							"\r",
+							"// Gerar uma senha aleatória (opcional)\r",
+							"function getRandomPassword(length = 10) {\r",
+							"    const chars = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\";\r",
+							"    let password = \"\";\r",
+							"    for (let i = 0; i < length; i++) {\r",
+							"        password += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+							"    }\r",
+							"    return password;\r",
+							"}\r",
+							"\r",
+							"// Armazenar nas variáveis do Postman\r",
+							"pm.environment.set(\"random_name\", getRandomName());\r",
+							"// pm.environment.set(\"random_email\", randomEmail); // Email único com timestamp\r",
+							"pm.environment.set(\"random_password\", getRandomPassword());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-XSRF-TOKEN",
+						"value": "{{Cookie}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"{{random_name}}\",\r\n    \"password\": \"{{random_password}}\",\r\n    \"acesso\": \"PROFESSOR\",\r\n    \"ativo\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/add",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 4 - pegandoTodosOrientadores",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"email\": \"\",\r\n    \"name\": \"\",\r\n    \"password\": \"\",\r\n    \"access\": \"\",\r\n    \"active\": 1\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/all",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 5 - getOrientadorEspecifico",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"randomEmail = 'lucas123@gmail.com';\r",
+							"\r",
+							"pm.environment.set(\"random_email\", randomEmail);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n    \"email\": \"\",\r\n    \"name\": \"\",\r\n    \"password\": \"\",\r\n    \"access\": \"\",\r\n    \"active\": 1\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/get/{{random_email}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"get",
+						"{{random_email}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Caso 6 - getOrientadorEspecificoInexistente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"randomEmail = 'naoexiste@email.com.br';\r",
+							"\r",
+							"pm.environment.set(\"random_email\", randomEmail);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n    \"email\": \"{{random_email}}\",\r\n    \"name\": \"\",\r\n    \"password\": \"\",\r\n    \"access\": \"\",\r\n    \"active\": 1\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BaseURL}}/api/v1/Orientador/get/{{random_email}}",
+					"host": [
+						"{{BaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"Orientador",
+						"get",
+						"{{random_email}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
