@@ -44,4 +44,3 @@ newman run collection.json -e environment.json
 ## 📖 Aprendizados
 
 - Uso de collections e environments
-```
